@@ -1,0 +1,61 @@
+:root {
+    --page-max-width: 600px;
+
+    --page-background: #f0f0f0;
+    --primary-color: rebeccapurple;
+    --text-color: #333;
+
+    --spacing-small: 8px;
+    --spacing-medium: 16px;
+    --spacing-large: 24px;
+
+    --border-radius: 4px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: var(--spacing-large);
+    padding-top: calc(var(--spacing-large) * 2);
+    font-family: Arial, sans-serif;
+    background-color: var(--page-background);
+    color: var(--text-color);
+}
+
+#app {
+    width: 100%;
+    max-width: var(--page-max-width);
+}
+
+#suggestion-container {
+    background-color: #222;
+    color: #fff;
+    padding: var(--spacing-large);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: var(--spacing-large) 0;
+}
+
+h1 {
+    color: var(--text-color);
+    margin: 0;
+    margin-bottom: var(--spacing-medium);
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-small);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-right: var(--spacing-medium);
+}
