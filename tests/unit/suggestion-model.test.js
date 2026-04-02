@@ -1,22 +1,17 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { AppModel } from "../../src/suggestion/suggestion-model.js";
+import { Suggestion } from "../../src/suggestion/suggestion-model.js";
 
-describe("app-model", () => {
+describe("suggestion-model", () => {
   let model;
 
   beforeEach(() => {
-    model = new AppModel();
+    model = new Suggestion(1, "Test Suggestion", "This is a test suggestion.", new Date());
   });
 
-  test("posts starts as empty array", () => {
-    expect(model.posts).toEqual([]);
-  });
-
-  test("reset clears all state", () => {
-    model.posts = [{ id: 1, title: "Hej" }];
-    model.selectedTag = "history";
-    model.reset();
-    expect(model.posts).toEqual([]);
-    expect(model.selectedTag).toBeNull();
+  test("initializes with correct properties", () => {
+    expect(model.id).toBe(1);
+    expect(model.name).toBe("Test Suggestion");
+    expect(model.description).toBe("This is a test suggestion.");
+    expect(model.suggestedAt).toBeInstanceOf(Date);
   });
 });
