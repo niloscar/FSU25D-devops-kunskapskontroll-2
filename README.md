@@ -133,6 +133,6 @@ Marknadsanalysen visar att det finns god efterfrågan på personaliserade träni
 
 # Länkar
 
-**Trello:** [https://trello.com/invite/b/69cb...](https://trello.com/invite/b/69cb92cb78f2cb68edcd1841/ATTIa020c48874b38a39b4f5a367b5f6eea5EC37AA13/grupp-4-devops-kunskapslontroll-2)
+**Trello board:** [Grupp 4, DevOps kunskapskontroll 2](https://trello.com/invite/b/69cb92cb78f2cb68edcd1841/ATTIa020c48874b38a39b4f5a367b5f6eea5EC37AA13/grupp-4-devops-kunskapslontroll-2)
 
 **Live demo:** [Vercel Production](https://fsu25d-devops-kunskapskontroll-2.vercel.app/)
