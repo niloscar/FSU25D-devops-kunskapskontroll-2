@@ -10,7 +10,7 @@
 4. [Ansvarsfördelning](#ansvarsfördelning)
 5. [Länkar](#länkar)
 
-# Problem och lösning
+# Problem och lösning/idé
 
 **Problem:** personer som tränar vet inte vad de bör träna idag utifrån återhämtning, föregående pass och aktuellt träningsmål, trots stora mängder tillgänglig data.
 
@@ -119,21 +119,22 @@ Marknadsanalysen visar att det finns god efterfrågan på personaliserade träni
 
 # Ansvarsfördelning
 
-- ER-diagram och databasarkitektur (Oscar)
+- DB-arkitektur och ER-diagram (Oscar)
 - Supabase/DB-setup (Harald)
-- CI/CD-setup (Harald/Oscar)
+- CI/CD-setup och GitHub-rulesets (Oscar)
 - Wireframes (Ilma/Deniz)
 - Grafisk profil (?)
-- Sektioner/sidor
+- Funktioner/sektioner/sidor
     - Startsida (?)
     - Användarprofil (?)
-    - Träningsdetaljer (?)
+    - Förslag på träningspass (?)
+    - Träningspass (?)
     - Övningsdetaljer (?)
 - Logik (?)
-- Enhets-, integrations och P2P-tester (utförs av personen som utvecklat featuren)
+- Enhets-, integrations och P2P-tester (utförs av personen som utvecklat funktionen/sektionen/sidan)
 
 # Länkar
 
 **Trello:** [https://trello.com/invite/b/69cb...](https://trello.com/invite/b/69cb92cb78f2cb68edcd1841/ATTIa020c48874b38a39b4f5a367b5f6eea5EC37AA13/grupp-4-devops-kunskapslontroll-2)
 
-**Live demo:** In progress
+**Live demo:** https://fsu25d-devops-kunskapskontroll-2.vercel.app/
