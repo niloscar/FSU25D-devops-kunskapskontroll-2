@@ -1,6 +1,7 @@
 node_modules/
 coverage/
 dist/
+test-results/
 .DS_Store
 Thumbs.db
 Behovs- och marknadsanalys, kravspec.docx
