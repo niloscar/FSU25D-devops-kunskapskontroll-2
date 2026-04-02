@@ -1,11 +1,9 @@
 # Innehåll
 
 1. [Problem och lösning](#problem-och-lösning)
-2. [Behovs- och marknadsanalyser](#behovs--och-marknadsanalyser)  
-
-    2.1 [Behovsanalys](#behovsanalys)  
-    2.2 [Marknadsanalys](#marknadsanalys)
-
+2. [Behovs- och marknadsanalyser](#behovs--och-marknadsanalyser)
+    - 2.1 [Behovsanalys](#behovsanalys)
+    - 2.2 [Marknadsanalys](#marknadsanalys)
 3. [Kravspec](#kravspec)
 4. [Ansvarsfördelning](#ansvarsfördelning)
 5. [Länkar](#länkar)
@@ -137,4 +135,4 @@ Marknadsanalysen visar att det finns god efterfrågan på personaliserade träni
 
 **Trello:** [https://trello.com/invite/b/69cb...](https://trello.com/invite/b/69cb92cb78f2cb68edcd1841/ATTIa020c48874b38a39b4f5a367b5f6eea5EC37AA13/grupp-4-devops-kunskapslontroll-2)
 
-**Live demo:** https://fsu25d-devops-kunskapskontroll-2.vercel.app/
+**Live demo:** [Vercel Production](https://fsu25d-devops-kunskapskontroll-2.vercel.app/)
