@@ -3,27 +3,30 @@ const API_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 /**
  * Sends an HTTP request to the specified table with the given options.
- * Only used internally by the get funciton for now.
+ * Only used internally by the get function for now.
  */
 async function request(table, options = {}) {
-    if (!API_BASE_URL || !API_ANON_KEY || !table) return;
+    if (!API_BASE_URL) throw new Error('API_BASE_URL is not defined');
+    if (!API_ANON_KEY) throw new Error('API_ANON_KEY is not defined');
+    if (!table) throw new Error('Table name is required');
 
     const { query, headers, body, ...rest } = options; // Extract query, headers, and body from options.
 
     const config = {
         headers: {
+            'Content-Type': 'application/json',
+            apikey: API_ANON_KEY,
+            // Authorization: `Bearer ${token}`, // For future use if needed.
             ...headers
         },
         ...rest
     };
-    if (body !== undefined) { // Only set Content-Type and body if body is provided.
-        config.headers['Content-Type'] = 'application/json';
+
+    if (body !== undefined) { // Only set body if body is provided.
         config.body = (typeof body === 'string') ? body : JSON.stringify(body);
     }
 
-    const requestUrl = buildQueryString(table, query);
-
-    const response = await fetch(requestUrl, config);
+    const response = await fetch(buildQueryString(table, query), config);
 
     if (!response.ok) {
         let message = 'Something went wrong';
@@ -61,8 +64,6 @@ export function get(table, query = {}) {
  */
 function buildQueryString(table, query = {}) {
     const url = new URL(`${API_BASE_URL}/${table}`);
-
-    url.searchParams.set('apikey', API_ANON_KEY);
 
     Object.entries(query).forEach(([key, value]) => {
         if (value == null) return;
