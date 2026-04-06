@@ -32,7 +32,7 @@ describe('api-service / get', () => {
         const [url, config] = fetch.mock.calls[0];
         const parsedUrl = new URL(url);
 
-        expect(parsedUrl.pathname).toMatch(new RegExp(`/${mockData.table}$`));
+        expect(parsedUrl.pathname).toMatch(new RegExp(`/rest/v1/${mockData.table}$`));
         expect(parsedUrl.searchParams.get('id')).toBe(String(mockData.query.id));
         expect(config).toMatchObject({
             method: 'GET',
