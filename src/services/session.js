@@ -1,0 +1,1 @@
+export const DEMO_USER_ID = 1; // Simulates a logged-in user.
