@@ -3,7 +3,7 @@ export const API_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 
 /**
  * Sends an HTTP request to the specified table with the given options.
- * Only used internally by the get function for now.
+ * Used internally by the get and patch functions.
  */
 async function request(table, options = {}) {
     if (!API_BASE_URL) throw new Error('API_BASE_URL is not defined');
