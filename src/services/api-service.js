@@ -14,7 +14,6 @@ async function request(table, options = {}) {
 
     const config = {
         headers: {
-            'Content-Type': 'application/json',
             apikey: API_ANON_KEY,
             // Authorization: `Bearer ${token}`, // For future use if needed.
             ...headers
