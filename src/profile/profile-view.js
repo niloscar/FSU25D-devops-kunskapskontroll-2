@@ -1,0 +1,1 @@
+//Render-Userpage-functions HÄR, exportera till 'profile-controller'
