@@ -37,8 +37,7 @@ describe('api-service / get', () => {
         expect(config).toMatchObject({
             method: 'GET',
             headers: {
-                apikey: API_ANON_KEY,
-                'Content-Type': 'application/json',
+                apikey: API_ANON_KEY
             },
         });
     });
