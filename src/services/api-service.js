@@ -65,13 +65,13 @@ export function get(table, query = {}) {
 }
 
 /**
- * Sends a PATCH request to the specified table with a body and optional query parameters:
+ * Sends a PATCH request to the specified table with a required body and optional query parameters:
  * @param {string} table The table or endpoint to request.
- * @param {Object} [body={}] The body of the request.
+ * @param {Object} body The body of the request.
  * @param {Object} [query={}] Query parameters to include in the request URL.
  * @returns {Promise<any>} The parsed JSON response, or null if no content is returned.
  */
-export function patch(table, body = {}, query = {}) {
+export function patch(table, body, query = {}) {
     return request(table, {
         method: 'PATCH',
         body,
