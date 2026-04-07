@@ -6,8 +6,6 @@ export const API_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
  * Used internally by the get and patch functions.
  */
 async function request(table, options = {}) {
-    if (!API_BASE_URL) throw new Error('API_BASE_URL is not defined');
-    if (!API_ANON_KEY) throw new Error('API_ANON_KEY is not defined');
     if (!table) throw new Error('Table name is required');
 
     const { query, headers, body, ...rest } = options; // Extract query, headers, and body from options.
