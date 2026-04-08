@@ -162,9 +162,7 @@ function cacheResponse(url, data) {
 
     try {
         localStorage.setItem(getStorageKey(url), JSON.stringify(entry));
-    } catch (error) {
-        console.warn('Could not persist API cache to localStorage:', error);
-    }
+    } catch {}
 }
 
 
@@ -182,13 +180,11 @@ function getCachedResponse(url, ttl = CACHE_DURATION) {
         responseCache.delete(url);
     }
 
-    let raw;
+    let raw = null;
+
     try {
         raw = localStorage.getItem(getStorageKey(url));
-    } catch (error) {
-        console.warn('Could not read API cache from localStorage:', error);
-        return null;
-    }
+    } catch {}
 
     if (!raw) return null;
 
@@ -196,23 +192,14 @@ function getCachedResponse(url, ttl = CACHE_DURATION) {
         const parsed = JSON.parse(raw);
 
         if (Date.now() - parsed.cachedAt >= ttl) {
-            try {
-                localStorage.removeItem(getStorageKey(url));
-            } catch (error) {
-                console.warn('Could not remove expired API cache from localStorage:', error);
-            }
+            localStorage.removeItem(getStorageKey(url));
             return null;
         }
 
         responseCache.set(url, parsed);
         return parsed.data;
     } catch (error) {
-        console.warn('Failed to parse cached API response:', error);
-        try {
-            localStorage.removeItem(getStorageKey(url));
-        } catch (removeError) {
-            console.warn('Could not remove API cache entry from localStorage:', removeError);
-        }
+        localStorage.removeItem(getStorageKey(url));
         return null;
     }
 }
@@ -226,11 +213,7 @@ export function clearApiCache() {
 
     Object.keys(localStorage).forEach((key) => {
         if (key.startsWith(CACHE_PREFIX)) {
-            try {
-                localStorage.removeItem(key);
-            } catch (error) {
-                console.warn('Could not remove API cache entry from localStorage:', error);
-            }
+            localStorage.removeItem(key);
         }
     });
 }
