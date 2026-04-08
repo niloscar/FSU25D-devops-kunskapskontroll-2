@@ -8,4 +8,7 @@ export function renderUserProfile(profile) {
     document.getElementById('measured_at').value = profile.measured_at || '';
     document.getElementById('height_cm').value = profile.height_cm || '';
     document.getElementById('weight_kg').value = profile.weight_kg || '';
+
+    //skriver ut exakt vilken data som skickas till view
+    console.log("PROFILE DATA:", profile);
 }

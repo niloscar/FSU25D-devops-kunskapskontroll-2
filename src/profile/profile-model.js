@@ -18,9 +18,11 @@ export async function fetchUserProfile() {
         mail: user.mail,
         fname: user.fname,
         lname: user.lname,
-        birthdate: user.birthdate, // om du har den
+        birthdate: user.birth_date, // om du har den
 
-        measured_at: latestMeasurement?.measured_at,
+        //measured_at är en timestampz- vi visar denna som en Date just nu
+        //men kan i framtiden enkelt plocka fram exakt tidpunkt, om vi vill.
+        measured_at: latestMeasurement?.measured_at?.split('T')[0],
         height_cm: latestMeasurement?.height_cm,
         weight_kg: latestMeasurement?.weight_kg
     };
