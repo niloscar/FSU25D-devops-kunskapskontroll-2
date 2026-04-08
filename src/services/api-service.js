@@ -162,7 +162,9 @@ function cacheResponse(url, data) {
 
     try {
         localStorage.setItem(getStorageKey(url), JSON.stringify(entry));
-    } catch {}
+    } catch {
+        // Ignore localStorage.setItem errors.
+    }
 }
 
 
@@ -184,7 +186,9 @@ function getCachedResponse(url, ttl = CACHE_DURATION) {
 
     try {
         raw = localStorage.getItem(getStorageKey(url));
-    } catch {}
+    } catch {
+        // Ignore localStorage.getItem errors.
+    }
 
     if (!raw) return null;
 
@@ -198,7 +202,7 @@ function getCachedResponse(url, ttl = CACHE_DURATION) {
 
         responseCache.set(url, parsed);
         return parsed.data;
-    } catch (error) {
+    } catch {
         localStorage.removeItem(getStorageKey(url));
         return null;
     }
