@@ -1,20 +1,31 @@
-const API_BASE_URL = 'https://mdhlvoozdqcyqosjiiry.supabase.co/rest/v1';
-const API_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kaGx2b296ZHFjeXFvc2ppaXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NTMyMTUsImV4cCI6MjA5MDUyOTIxNX0.wv6x-RatgosfA4fK5L7tWr_inmVv6xjtGhPpGGQUCng';
+export const API_BASE_URL = 'https://mdhlvoozdqcyqosjiiry.supabase.co/rest/v1';
+export const API_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kaGx2b296ZHFjeXFvc2ppaXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NTMyMTUsImV4cCI6MjA5MDUyOTIxNX0.wv6x-RatgosfA4fK5L7tWr_inmVv6xjtGhPpGGQUCng';
+
+const responseCache = new Map();
+const CACHE_PREFIX = 'api_cache:';
+const CACHE_DURATION = 60 * 60 * 1000;
+
 
 /**
  * Sends an HTTP request to the specified table with the given options.
- * Only used internally by the get function for now.
+ * Used internally by the API helper functions.
  */
 async function request(table, options = {}) {
-    if (!API_BASE_URL) throw new Error('API_BASE_URL is not defined');
-    if (!API_ANON_KEY) throw new Error('API_ANON_KEY is not defined');
     if (!table) throw new Error('Table name is required');
 
-    const { query, headers, body, ...rest } = options; // Extract query, headers, and body from options.
+    const { 
+        query, 
+        headers, 
+        body, 
+        useCache = false,
+        cacheTtlMs = CACHE_DURATION,
+        ...rest 
+    } = options; // Extract query, headers, and body from options.
+
+    const method = (rest.method || 'GET').toUpperCase();
 
     const config = {
         headers: {
-            'Content-Type': 'application/json',
             apikey: API_ANON_KEY,
             // Authorization: `Bearer ${token}`, // For future use if needed.
             ...headers
@@ -22,11 +33,38 @@ async function request(table, options = {}) {
         ...rest
     };
 
-    if (body !== undefined) { // Only set body if body is provided.
+    if (
+        method === 'PATCH' && 
+        (
+            body === undefined ||
+            body === null ||
+            (typeof body === 'object' && Object.keys(body).length === 0)
+        )
+    ) {
+        throw new Error('Body is required for PATCH requests');
+    }
+
+    if (body !== undefined) { // Only set content-type and body if body is provided.
+        config.headers['Content-Type'] = 'application/json';
         config.body = (typeof body === 'string') ? body : JSON.stringify(body);
     }
 
-    const response = await fetch(buildQueryString(table, query), config);
+    const url = buildQueryString(table, query);
+
+    if (method === 'GET' && useCache) {
+        const cachedData = getCachedResponse(url, cacheTtlMs);
+        if (cachedData !== null) {
+            return cachedData;
+        }
+    }
+
+    let response;
+
+    try {
+        response = await fetch(url, config);
+    } catch (error) {
+        throw new Error('Network error: Failed to fetch data from the server', error);
+    }
 
     if (!response.ok) {
         let message = 'Something went wrong';
@@ -42,22 +80,49 @@ async function request(table, options = {}) {
     }
 
     if (response.status === 204) return null; // No content to return.
+    
+    const data = await response.json();
 
-    return response.json();
+    if (method === 'GET' && useCache) cacheResponse(url, data);
+
+    return data;
 }
 
 /**
  * Sends a GET request to the specified table with optional query parameters:
  * @param {string} table The table or endpoint to request.
  * @param {Object} [query={}] Query parameters to include in the request URL.
+ * @param {Object} [options={}] Additional options such as useCache and cacheTtlMs for caching behavior.
+ *  - useCache (boolean): Whether to use caching for this request. Default is false.
+ *  - cacheTtlMs (number): Time-to-live for the cache in milliseconds. Default is 1 hour.
  * @returns {Promise<any>} The parsed JSON response, or null if no content is returned.
  */
-export function get(table, query = {}) {
+export function get(table, query = {}, options = {}) {
     return request(table, {
+        ...options,
         method: 'GET',
         query
     });
 }
+
+/**
+ * Sends a PATCH request to the specified table with a required body and optional query parameters:
+ * @param {string} table The table or endpoint to request.
+ * @param {Object} body The body of the request.
+ * @param {Object} [query={}] Query parameters to include in the request URL.
+ * @returns {Promise<any>} The parsed JSON response, or null if no content is returned.
+ */
+export function patch(table, body, query = {}) {
+    return request(table, {
+        method: 'PATCH',
+        body,
+        query,
+        headers: {
+            Prefer: 'return=representation'
+        }
+    });
+}
+
 
 /**
  * Builds a complete URL with query parameters for the given table and query object.
@@ -65,10 +130,109 @@ export function get(table, query = {}) {
 function buildQueryString(table, query = {}) {
     const url = new URL(`${API_BASE_URL}/${table}`);
 
-    Object.entries(query).forEach(([key, value]) => {
-        if (value == null) return;
-        url.searchParams.append(key, value);
-    });
+    Object.entries(query) // Sort query parameters alphabetically for consistent caching keys.
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([key, value]) => {
+            if (value == null) return;
+            url.searchParams.append(key, value);
+        });
 
     return url.toString();
+}
+
+
+/**
+ * Generates a unique storage key for caching based on the request URL.
+ */
+function getStorageKey(url) {
+    return `${CACHE_PREFIX}${url}`;
+}
+
+
+/**
+ * Caches the response data for a given URL in both in-memory cache and localStorage with a timestamp for expiration.
+ */
+function cacheResponse(url, data) {
+    const entry = {
+        data,
+        cachedAt: Date.now()
+    };
+
+    responseCache.set(url, entry);
+
+    try {
+        localStorage.setItem(getStorageKey(url), JSON.stringify(entry));
+    } catch {
+        // Ignore localStorage.setItem errors.
+    }
+}
+
+
+/**
+ * Retrieves a cached response for the given URL if it exists and is still valid based on the provided TTL (time-to-live).
+ */
+function getCachedResponse(url, ttl = CACHE_DURATION) {
+    const inMemory = responseCache.get(url);
+
+    if (inMemory && (Date.now() - inMemory.cachedAt < ttl)) {
+        return inMemory.data;
+    }
+
+    if (inMemory) {
+        responseCache.delete(url);
+    }
+
+    let raw = null;
+
+    try {
+        raw = localStorage.getItem(getStorageKey(url));
+    } catch {
+        // Ignore localStorage.getItem errors.
+    }
+
+    if (!raw) return null;
+
+    try {
+        const parsed = JSON.parse(raw);
+
+        if (Date.now() - parsed.cachedAt >= ttl) {
+            localStorage.removeItem(getStorageKey(url));
+            return null;
+        }
+
+        responseCache.set(url, parsed);
+        return parsed.data;
+    } catch {
+        localStorage.removeItem(getStorageKey(url));
+        return null;
+    }
+}
+
+
+/**
+ * Clears the entire API response cache.
+ */
+export function clearApiCache() {
+    responseCache.clear();
+
+    Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith(CACHE_PREFIX)) {
+            localStorage.removeItem(key);
+        }
+    });
+}
+
+
+/**
+ * Removes a specific cached response based on the table and query parameters.
+ */
+export function invalidateApiCacheEntry(table, query = {}) {
+    const url = buildQueryString(table, query);
+    responseCache.delete(url);
+
+    try {
+        localStorage.removeItem(getStorageKey(url));
+    } catch (error) {
+        console.warn('Could not remove API cache entry from localStorage:', error);
+    }
 }
