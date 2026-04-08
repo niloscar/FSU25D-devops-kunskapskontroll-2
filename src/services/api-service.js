@@ -62,7 +62,7 @@ async function request(table, options = {}) {
 
     try {
         response = await fetch(url, config);
-    } catch {
+    } catch (error) {
         throw new Error('Network error: Failed to fetch data from the server');
     }
 
@@ -92,13 +92,16 @@ async function request(table, options = {}) {
  * Sends a GET request to the specified table with optional query parameters:
  * @param {string} table The table or endpoint to request.
  * @param {Object} [query={}] Query parameters to include in the request URL.
+ * @param {Object} [options={}] Additional options such as useCache and cacheTtlMs for caching behavior.
+ *  - useCache (boolean): Whether to use caching for this request. Default is false.
+ *  - cacheTtlMs (number): Time-to-live for the cache in milliseconds. Default is 1 hour.
  * @returns {Promise<any>} The parsed JSON response, or null if no content is returned.
  */
 export function get(table, query = {}, options = {}) {
     return request(table, {
+        ...options,
         method: 'GET',
-        query,
-        ...options
+        query
     });
 }
 
@@ -156,7 +159,12 @@ function cacheResponse(url, data) {
     };
 
     responseCache.set(url, entry);
-    localStorage.setItem(getStorageKey(url), JSON.stringify(entry));
+
+    try {
+        localStorage.setItem(getStorageKey(url), JSON.stringify(entry));
+    } catch (error) {
+        console.warn('Could not persist API cache to localStorage:', error);
+    }
 }
 
 
@@ -174,7 +182,13 @@ function getCachedResponse(url, ttl = CACHE_DURATION) {
         responseCache.delete(url);
     }
 
-    const raw = localStorage.getItem(getStorageKey(url));
+    let raw;
+    try {
+        raw = localStorage.getItem(getStorageKey(url));
+    } catch (error) {
+        console.warn('Could not read API cache from localStorage:', error);
+        return null;
+    }
 
     if (!raw) return null;
 
@@ -182,14 +196,23 @@ function getCachedResponse(url, ttl = CACHE_DURATION) {
         const parsed = JSON.parse(raw);
 
         if (Date.now() - parsed.cachedAt >= ttl) {
-            localStorage.removeItem(getStorageKey(url));
+            try {
+                localStorage.removeItem(getStorageKey(url));
+            } catch (error) {
+                console.warn('Could not remove expired API cache from localStorage:', error);
+            }
             return null;
         }
 
         responseCache.set(url, parsed);
         return parsed.data;
-    } catch {
-        localStorage.removeItem(getStorageKey(url));
+    } catch (error) {
+        console.warn('Failed to parse cached API response:', error);
+        try {
+            localStorage.removeItem(getStorageKey(url));
+        } catch (removeError) {
+            console.warn('Could not remove API cache entry from localStorage:', removeError);
+        }
         return null;
     }
 }
@@ -203,7 +226,11 @@ export function clearApiCache() {
 
     Object.keys(localStorage).forEach((key) => {
         if (key.startsWith(CACHE_PREFIX)) {
-            localStorage.removeItem(key);
+            try {
+                localStorage.removeItem(key);
+            } catch (error) {
+                console.warn('Could not remove API cache entry from localStorage:', error);
+            }
         }
     });
 }
@@ -215,5 +242,10 @@ export function clearApiCache() {
 export function invalidateApiCacheEntry(table, query = {}) {
     const url = buildQueryString(table, query);
     responseCache.delete(url);
-    localStorage.removeItem(getStorageKey(url));
+
+    try {
+        localStorage.removeItem(getStorageKey(url));
+    } catch (error) {
+        console.warn('Could not remove API cache entry from localStorage:', error);
+    }
 }
