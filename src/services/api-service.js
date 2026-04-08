@@ -54,7 +54,6 @@ async function request(table, options = {}) {
     if (method === 'GET' && useCache) {
         const cachedData = getCachedResponse(url, cacheTtlMs);
         if (cachedData !== null) {
-            console.log(`Using cached response for ${url}`);
             return cachedData;
         }
     }
