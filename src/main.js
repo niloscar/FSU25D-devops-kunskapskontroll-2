@@ -11,6 +11,8 @@ function router() {
         initWorkoutPage();
     } else if (hash === '#exercises') {
         initExercisePage();
+    } else if (hash === '#profile') {
+        initProfilePage();
     } else {
         initFrontpage();
     }
