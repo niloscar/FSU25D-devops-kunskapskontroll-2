@@ -63,7 +63,7 @@ async function request(table, options = {}) {
     try {
         response = await fetch(url, config);
     } catch (error) {
-        throw new Error('Network error: Failed to fetch data from the server');
+        throw new Error('Network error: Failed to fetch data from the server', error);
     }
 
     if (!response.ok) {
