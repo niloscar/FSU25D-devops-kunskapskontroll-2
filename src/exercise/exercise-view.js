@@ -11,7 +11,7 @@ export function renderExercises(exercises) {
             <h1>Övningar</h1>
             ${exerciseList}
             <nav>
-                <a href="#workout">Tillbaka</a>
+                <a href="workout.html">Tillbaka</a>
             </nav>
         </div>
     `;
