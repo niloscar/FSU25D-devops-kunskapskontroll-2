@@ -15,23 +15,14 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
 
     if (!suggestionBasis) {
         const easiestTemplate = getEasiestWorkoutTemplate(workoutTemplates);
-
-        if (!easiestTemplate) {
-            return {
-                score: null,
-                templates: []
-            };
-        }
+        if (!easiestTemplate) return null;
 
         return {
-            score: 0,
-            templates: [{
-                template: easiestTemplate,
-                reasons: ['No previous workouts found, selected an easy starter workout']
-            }]
+            template: easiestTemplate,
+            reasons: ['No previous workouts found, selected an easy starter workout'],
+            score: 0
         };
     }
-
 
     const result = {
         score: -Infinity,
@@ -125,7 +116,15 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
         }
     }
 
-    return (result.templates.length === 0) ? null : result.templates[randomInt(0, result.templates.length - 1)]; // If multiple templates have the same best score, pick one at random to return.
+    if (result.templates.length === 0) return null;
+
+    const winner = result.templates[randomInt(0, result.templates.length - 1)];
+
+    return {
+        template: winner.template,
+        reasons: winner.reasons,
+        score: result.score
+    };
 }
 
 
