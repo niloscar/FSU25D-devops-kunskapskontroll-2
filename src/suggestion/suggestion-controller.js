@@ -14,7 +14,7 @@ import { renderSuggestionSection, renderSuggestedWorkout, renderSuggestionBasis,
  * Fetches necessary data, calculates the best workout template based on the user's recent activities and preferences, and renders the suggestion in the DOM.
  */
 export async function initSuggestionSection() {
-    //clearApiCache();
+
     try {
         /* Step 1: render the suggestion section container in the DOM */
         renderSuggestionSection();

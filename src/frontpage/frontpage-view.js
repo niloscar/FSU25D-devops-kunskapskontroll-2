@@ -4,6 +4,9 @@
  * ================================================================================= */
 
 
+/**
+ * Renders title and welcome message on the front page.
+ */
 export function renderFrontpage() {
     document.querySelector('#app').innerHTML = `
         <h1>The Workout App</h1>
