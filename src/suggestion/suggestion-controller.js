@@ -26,12 +26,14 @@ export async function initSuggestionSection() {
         ]);
         
         /* Step 2: calculate the best matching workout template based on the user's preferences and previous activities */
-        const {template, reasons} = calculateBestWorkout(suggestionBasis, workoutTemplates);
+        const suggestion = calculateBestWorkout(suggestionBasis, workoutTemplates);
 
-        if (!template) {
+        if (!suggestion) {
             renderError('No suitable workout suggestion could be generated.');
             return;
         }
+
+        const { template, reasons } = suggestion;
 
         console.log('Suggestion generated with reasons:', reasons.join(', '));
 
