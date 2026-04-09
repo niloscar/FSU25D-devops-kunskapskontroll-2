@@ -8,8 +8,6 @@
  * Calculates a suitability score for a workout template based on the user's recent workout history and returns the best match.
  **/
 export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
-    
-    const SANDBOX = false;
 
     const suggestionBasis = suggestionBasisArray[0];
 
@@ -29,11 +27,6 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
         templates: []
     };
 
-    if (SANDBOX) {
-        console.log('Suggestion basis:', suggestionBasis);
-        console.log('Workout templates:', workoutTemplates);
-    }
-
     const basisLoad = calculateLoad(suggestionBasis.rpe, suggestionBasis.duration_minutes);
 
     for (const template of workoutTemplates) {
@@ -43,48 +36,38 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
         const load = calculateLoad(template.expected_rpe, template.default_duration_minutes);
         const muscleOverlap = calculateMuscleOverlap(suggestionBasis.muscle_groups, template.muscle_groups);
 
-        if (SANDBOX) console.log(`Evaluating template: ${template.workout_name}`);
-
         // Check if the template is the same as used in the last workout.
         if (suggestionBasis.workout_template_id === template.workout_template_id) {
-            if (SANDBOX) console.log('Template is the same as last workout, applying penalty');
             score -= 30;
             reasons.push('Same workout as last time');
         }
 
         // Check if the template has the same focus type as the last workout.
         if (suggestionBasis.focus_type_id === template.focus_type_id) {
-            if (SANDBOX) console.log('Template has same focus type as last workout, applying penalty');
             score -= 20;
             reasons.push('Same focus as previous workout');
         } else {
-            if (SANDBOX) console.log('Template has different focus type from last workout, applying bonus');
             score += 10;
             reasons.push('Different focus than previous workout');
         }
 
         // Check load differences and apply bonuses or penalties based on how the template's expected load compares to the user's last workout load.
-        if (SANDBOX) console.log('Basis load:', basisLoad, 'Template load:', load);
         if (basisLoad > 250 && load < 180) {
-            if (SANDBOX) console.log('Template has significantly lower load than last heavy workout, applying bonus');
             score += 20;
             reasons.push('Lower expected load after heavy workout');
         }
 
         if (basisLoad > 250 && load > 250) {
-            if (SANDBOX) console.log('Template has high load similar to last heavy workout, applying penalty');
             score -= 25;
             reasons.push('Too heavy after heavy workout');
         }
 
         if (basisLoad < 120 && load >= 150) {
-            if (SANDBOX) console.log('Template has suitable increase after light workout, applying bonus');
             score += 15;
             reasons.push('Suitable increase after light workout');
         }
 
         // Check muscle group overlap and apply penalties for high overlap.
-        if (SANDBOX) console.log('Muscle group overlap score:', muscleOverlap);
         if (muscleOverlap >= 6) {
             score -= 20;
             reasons.push('High overlap with recently trained muscle groups');
@@ -97,22 +80,16 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
         }
 
         if (score > result.score) {
-            if (SANDBOX) console.log(reasons);
             result.templates = [{
                 template: template,
                 reasons: reasons
             }];
             result.score = score;
-            if (SANDBOX) console.log('New best template found with score:', score);
         } else if (score === result.score) {
-            if (SANDBOX) console.log(reasons);
             result.templates.push({
                 template: template,
                 reasons: reasons
             });
-            if (SANDBOX) console.log('Another template found with same best score:', score);
-        } else {
-            if (SANDBOX) console.log('Template scored lower (', score, ') than current best score:', result.score);
         }
     }
 
