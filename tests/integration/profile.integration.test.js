@@ -6,19 +6,17 @@ describe('profile integration', () => {
 
     test('renders profile data in DOM', async () => {
 
-        // Fake'at DOM-träd(Gjorde div'ar för det strulade med Table)
         document.body.innerHTML = `
-        <div id="username"></div>
-        <div id="mail"></div>
-        <div id="fname"></div>
-        <div id="lname"></div>
-        <div id="birthdate"></div>
-        <div id="measured_at"></div>
-        <div id="height_cm"></div>
-        <div id="weight_kg"></div>
+            <div id="username"></div>
+            <div id="mail"></div>
+            <div id="fname"></div>
+            <div id="lname"></div>
+            <div id="birthdate"></div>
+            <div id="measured_at"></div>
+            <div id="height_cm"></div>
+            <div id="weight_kg"></div>
         `;
 
-        // Mockad API/user
         vi.spyOn(api, 'getUserProfile').mockResolvedValue([
             {
                 username: "Test.User",
@@ -39,7 +37,7 @@ describe('profile integration', () => {
         await initProfilePage();
 
         expect(document.getElementById('username').textContent).toBe("Test.User");
+        expect(document.getElementById('mail').textContent).toBe("test@mail.com");
         expect(document.getElementById('height_cm').textContent).toBe("180");
-        expect (document.getElementById('mail').textContent).toBe("test@mail.com");
     });
 });
