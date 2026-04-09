@@ -30,7 +30,7 @@ body {
     color: var(--text-color);
 }
 
-#app {
+#app, footer {
     width: 100%;
     max-width: var(--page-max-width);
 }
