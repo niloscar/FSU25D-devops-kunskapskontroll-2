@@ -7,9 +7,9 @@ export function renderFrontpage() {
             Today's suggestion will be rendered here ... eventually.
         </div>
         <nav>
-            <a href='#/workouts'>Workouts</a>
-            <a href='#/exercises'>Exercises</a>
-            <a href='#/profile'>Profile</a>
+            <a href='#workout'>Workouts</a>
+            <a href='#exercises'>Exercises</a>
+            <a href='#profile'>Profile</a>
         </nav>
     `;
 }
