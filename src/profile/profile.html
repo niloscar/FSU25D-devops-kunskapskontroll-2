@@ -10,26 +10,31 @@
     <header></header>
 
     <main>
-        <div id="main-title">
-            <h1>My Profile Page</h1>
-        </div>
+        <div id="user-data">
 
-        <form id="user-form">
-            <div id="my-details">
-            <h3>My details</h3>
-            <label>Username: <input type="text" id="username"></label><br>
-            <label>Email: <input type="email" id="mail"></label><br>
-            <label>First name: <input type="text" id="fname"></label><br>
-            <label>Last name: <input type="text" id="lname"></label><br>
-            <label>Birthdate: <input type="date" id="birthdate"></label><br>
-            </div>
-            <div id="my-measurements">
-            <h3>My Measurements</h3>
-            <label>Latest Measured: <input type="date" id="measured_at"></label><br>
-            <label>Height (cm): <input type="number" id="height_cm" step="0.1"></label><br>
-            <label>Weight (kg): <input type="number" id="weight_kg" step="0.1"></label><br>
-            </div>
-        </form>
+    <div id="my-details">
+        <h3>My details</h3>
+        <table>
+            <tbody>
+                <tr><th>Username</th><td id="username"></td></tr>
+                <tr><th>Email</th><td id="mail"></td></tr>
+                <tr><th>First name</th><td id="fname"></td></tr>
+                <tr><th>Last name</th><td id="lname"></td></tr>
+                <tr><th>Birthdate</th><td id="birthdate"></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="my-measurements">
+        <h3>My Measurements</h3>
+        <table>
+            <tbody>
+                <tr><th>Latest Measured</th><td id="measured_at"></td></tr>
+                <tr><th>Height (cm)</th><td id="height_cm"></td></tr>
+                <tr><th>Weight (kg)</th><td id="weight_kg"></td></tr>
+            </tbody>
+        </table>
+    </div>
     </main>
     <script type="module">
         import { initProfilePage } from './profile-controller.js';
