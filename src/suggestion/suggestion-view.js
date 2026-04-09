@@ -47,7 +47,7 @@ export function renderSuggestedWorkout(suggestion){
             <p class="suggestion-description">${suggestion.workout_description}</p>
             <span class="suggestion-duration">${suggestion.default_duration_minutes} min</span>
         </div>
-        <a class="suggestion-link" href="workout.html?id=${suggestion.workout_template_id}" target="_blank">Workout details</a>
+        <a class="suggestion-link" href="workout.html?id=${suggestion.workout_template_id}">Workout details</a>
     `;
 
     section.appendChild(suggestionDiv);
