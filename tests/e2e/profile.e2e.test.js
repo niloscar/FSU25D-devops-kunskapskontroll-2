@@ -2,8 +2,11 @@ import { test, expect } from '@playwright/test';
 
 test('profile page loads and displays user', async ({ page }) => {
 
-    //Kör på playwrights egna testserver
     await page.goto('http://localhost:4173/profile.html');
 
-    await expect(page.locator('#username')).toBeVisible();
+    // vänta på att elementet finns
+    await page.waitForSelector('#username');
+
+    // vänta tills det faktiskt fått innehåll
+    await expect(page.locator('#username')).not.toHaveText('');
 });
