@@ -2,7 +2,11 @@ import { test, expect } from '@playwright/test';
 
 test('profile page loads and displays user', async ({ page }) => {
 
-    await page.goto('http://localhost:5500/src/profile/profile.html');
+    //Kör på playwrights egna testserver
+    //await page.goto('http://localhost:4173/profile.html');
+
+    //"snabbhack"
+    await page.goto('file:///path/to/profile.html');
 
     await expect(page.locator('#username')).not.toBeEmpty();
 });
