@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header></header>
+
+    <main>
+        <div id="user-data">
+
+    <div id="my-details">
+        <h3>My details</h3>
+        <table>
+            <tbody>
+                <tr><th>Username</th><td id="username"></td></tr>
+                <tr><th>Email</th><td id="mail"></td></tr>
+                <tr><th>First name</th><td id="fname"></td></tr>
+                <tr><th>Last name</th><td id="lname"></td></tr>
+                <tr><th>Birthdate</th><td id="birthdate"></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="my-measurements">
+        <h3>My Measurements</h3>
+        <table>
+            <tbody>
+                <tr><th>Latest Measured</th><td id="measured_at"></td></tr>
+                <tr><th>Height (cm)</th><td id="height_cm"></td></tr>
+                <tr><th>Weight (kg)</th><td id="weight_kg"></td></tr>
+            </tbody>
+        </table>
+    </div>
+    </main>
+    <script type="module">
+        import { initProfilePage } from '/src/profile/profile-controller.js';
+        initProfilePage();
+    </script>
+
+    <footer></footer>
+</body>
+</html>
