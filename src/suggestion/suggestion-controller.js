@@ -14,18 +14,19 @@ import { renderSuggestionSection, renderSuggestedWorkout, renderSuggestionBasis,
  * Fetches necessary data, calculates the best workout template based on the user's recent activities and preferences, and renders the suggestion in the DOM.
  */
 export async function initSuggestionSection() {
-    renderSuggestionSection();
     //clearApiCache();
-
     try {
-        /* Step 1: get user profile, get all workout templates, get suggestion basis */
+        /* Step 1: render the suggestion section container in the DOM */
+        renderSuggestionSection();
+
+        /* Step 2: get user profile, get all workout templates, get suggestion basis */
         const [userProfile, workoutTemplates, suggestionBasis] = await Promise.all([
             getUserProfile(),
             getWorkoutTemplates(),
             getSuggestionBasis()
         ]);
         
-        /* Step 2: calculate the best matching workout template based on the user's preferences and previous activities */
+        /* Step 3: calculate the best matching workout template based on the user's preferences and previous activities */
         const suggestion = calculateBestWorkout(suggestionBasis, workoutTemplates);
 
         if (!suggestion) {
@@ -37,7 +38,7 @@ export async function initSuggestionSection() {
 
         console.log('Suggestion generated with reasons:', reasons.join(', '));
 
-        //* Step 3: render welcome message, the suggestion and the basis for it in the DOM */
+        //* Step 4: render welcome message, the suggestion and the basis for it in the DOM */
         renderWelcomeMessage(userProfile);
         renderSuggestedWorkout(template);
         renderSuggestionBasis(suggestionBasis);
