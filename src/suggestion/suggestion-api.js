@@ -34,7 +34,7 @@ export async function getSuggestionBasis(userId = loggedInUserId(), limit = 100)
         order: 'performed_at.desc'
     };
 
-    return await get(table, query, { useCache: true });
+    return await get(table, query);
 }
 
 
