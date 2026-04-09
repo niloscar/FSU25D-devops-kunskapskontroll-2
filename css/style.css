@@ -109,6 +109,46 @@ body {
     color: #888;
 }
 
+#user-profile {
+    width: 100%;
+    max-width: var(--page-max-width);
+    display: flex;
+    flex-direction: column;
+}
+
+#user-profile .profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: var(--spacing-medium);
+    background-color: rgba(0, 0, 0, 0.08);
+    align-self: center;
+    justify-self: center;
+}
+
+#user-profile table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+#user-profile th,
+#user-profile td {
+    padding: var(--spacing-small);
+    border-bottom: 1px solid #ddd;
+    width: 50%;
+}
+
+#user-profile a.back-link {
+    display: inline-block;
+    margin-top: var(--spacing-large);
+}
+
+#user-profile a.back-link::before {
+    content: '← ';
+}
+
 h1 {
     color: var(--text-color);
     margin: 0;
@@ -121,50 +161,43 @@ h2 {
 }
 
 a {
-    color: var(--primary-color);
+    color: #222;
     text-decoration: none;
-    margin-right: var(--spacing-medium);
 }
 
+a:hover {
+    text-decoration: underline;
+}
 
 .site-footer {
-  margin-top: auto;
-  width: 100%;
-  background: #222;
-  color: #fff;
-  padding: var(--spacing-medium);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--border-radius);
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.08);
-}
-
-.footer-inner {
-  width: 100%;
-  max-width: var(--page-max-width);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /*justify-content: space-between;*/
-  gap: var(--spacing-medium);
-}
-
-.footer-text {
-  font-weight: 600;
-  color: #fff;
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .footer-link {
-  color: white;
-  padding: calc(var(--spacing-small) - 2px) var(--spacing-medium);
-  border-radius: var(--border-radius);
-  text-decoration: none;
-  font-weight: 600;
+    color: inherit;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease;
+}
+
+.footer-link img.footer-profile-picture {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .footer-link:hover,
 .footer-link:focus {
-  background: rgba(255,255,255,0.08);
+  background-color: rgba(0,0,0,0.12);
   outline: none;
   text-decoration: underline;
 }
