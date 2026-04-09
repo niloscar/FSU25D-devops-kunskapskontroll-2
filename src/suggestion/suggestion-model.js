@@ -12,6 +12,27 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
     const SANDBOX = false;
 
     const suggestionBasis = suggestionBasisArray[0];
+
+    if (!suggestionBasis) {
+        const easiestTemplate = getEasiestWorkoutTemplate(workoutTemplates);
+
+        if (!easiestTemplate) {
+            return {
+                score: null,
+                templates: []
+            };
+        }
+
+        return {
+            score: 0,
+            templates: [{
+                template: easiestTemplate,
+                reasons: ['No previous workouts found, selected an easy starter workout']
+            }]
+        };
+    }
+
+
     const result = {
         score: -Infinity,
         templates: []
@@ -109,10 +130,20 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
 
 
 /**
- * Calculates a load value by multiplying RPE and duration.
+ * Returns the workout template with the lowest expected load (RPE * duration).
  */
-export function calculateLoad(rpe, duration) {
-    return rpe * duration;
+export function getEasiestWorkoutTemplate(workoutTemplates) {
+    return workoutTemplates
+        .filter(
+            (template) =>
+                template.expected_rpe != null &&
+                template.default_duration_minutes != null
+        )
+        .sort((a, b) => {
+            const loadA = calculateLoad(a.expected_rpe, a.default_duration_minutes);
+            const loadB = calculateLoad(b.expected_rpe, b.default_duration_minutes);
+            return loadA - loadB;
+        })[0] || null;
 }
 
 
@@ -137,6 +168,14 @@ export function calculateMuscleOverlap(basisMuscleGroups = [], templateMuscleGro
     }
 
     return overlapScore;
+}
+
+
+/**
+ * Calculates a load value by multiplying RPE and duration.
+ */
+export function calculateLoad(rpe, duration) {
+    return rpe * duration;
 }
 
 
