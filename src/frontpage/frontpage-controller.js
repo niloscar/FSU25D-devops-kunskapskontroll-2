@@ -1,8 +1,8 @@
 import { renderFrontpage } from './frontpage-view.js';
-import { generateSuggestion } from '../suggestion/suggestion-controller.js';
+import { initSuggestionSection } from '../suggestion/suggestion-controller.js';
 
 export function initFrontpage() {
     renderFrontpage();
-    generateSuggestion();
+    initSuggestionSection();
     console.log('Frontpage initialized');
 }

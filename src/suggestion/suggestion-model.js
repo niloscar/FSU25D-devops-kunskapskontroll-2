@@ -125,7 +125,7 @@ export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
         }
     }
 
-    return result.templates[randomInt(0, result.templates.length - 1)]; // If multiple templates have the same best score, pick one at random to return.
+    return (result.templates.length === 0) ? null : result.templates[randomInt(0, result.templates.length - 1)]; // If multiple templates have the same best score, pick one at random to return.
 }
 
 

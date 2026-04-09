@@ -110,3 +110,12 @@ function formatDate(dateString) {
 
     return date.toLocaleDateString('en-US', options);
 }
+
+
+/**
+ * Renders an error message in the DOM.
+ */
+export function renderError(message) {
+    const section = getElById('suggestion-section');
+    section.innerHTML = `<p class="error-message">${message}</p>`;
+}
