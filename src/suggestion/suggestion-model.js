@@ -1,54 +1,176 @@
+/* =================================================================================
+ *  suggestion-model.js
+ *  Contains the core logic for calculating workout suggestions based on user data and workout templates.
+ * ================================================================================= */
+
+
 /**
- * 
- * Vad ska datan hämtas ifrån?
- * - activities
- * - workout_templates
- * - workout_template_exercises
- * 
- * Hur fungerar logiken?
- * - Ge varje workout_template en poäng baserat på hur väl den matchar användarens preferenser och tidigare aktiviteter.
- * 1. Hämta möjliga pass.
- * 2. Beräkna hur bra varje pass passar användaren idag.
- * 3. Returnera passet med högst poäng.
- * 
- * actual_load = duration_minutes * rpe
- * template_load = default_duration_minutes * expected_rpe
- * load_difference = abs(actual_load - template_load)
- * 
- * poäng = max(0, 100 - (load_difference / template_load) * 100)
- * 
- * Förslag:
- * - Om poängen är över 80, rekommendera passet.
- * - Om poängen är mellan 50 och 80, rekommendera passet med en varning om att det kanske inte är optimalt.
- * - Om poängen är under 50, rekommendera ett lättare pass eller vila.
- * 
- * Utförande:
- * Steg 1: hämta användarens senaste aktiviteter.
- * Steg 2: hämta alla workout templates.
- * Steg 3: räkna ut vilket fokus och vilka muskler senaste passet belastade.
- * Steg 4: ge varje pass en poäng baserat på hur väl det matchar användarens preferenser och tidigare aktiviteter.
- * 
- */
+ * Calculates a suitability score for a workout template based on the user's recent workout history and returns the best match.
+ **/
+export function calculateBestWorkout(suggestionBasisArray, workoutTemplates) {
+    
+    const SANDBOX = false;
 
-import { getUserProfile, getUserActivities, getWorkoutTemplates } from './suggestion-api.js';
+    const suggestionBasis = suggestionBasisArray[0];
+    const result = {
+        score: -Infinity,
+        templates: []
+    };
 
-/* Steg 4: ge varje pass en poäng baserat på hur väl det matchar användarens preferenser och tidigare aktiviteter */
-// Sker i denna fil där vi implementerar logiken för att beräkna poängen baserat på användarens senaste aktiviteter och workout templates
-export function calculateMatchScore(userActivities, workoutTemplates) {
-    // Implementera logiken för att beräkna matchningspoängen här
-    // För varje workout template, jämför den med användarens senaste aktiviteter och räkna ut en poäng baserat på hur väl den matchar
-    // Returnera en lista med workout templates och deras respektive poäng
+    if (SANDBOX) {
+        console.log('Suggestion basis:', suggestionBasis);
+        console.log('Workout templates:', workoutTemplates);
+    }
 
+    const basisLoad = calculateLoad(suggestionBasis.rpe, suggestionBasis.duration_minutes);
 
+    for (const template of workoutTemplates) {
 
-    // return workoutTemplates.map(template => {
-    //     const matchScore = 0; // Här ska du implementera den faktiska logiken för att beräkna poängen
-    //     return {
-    //         workout_template: template,
-    //         match_score: matchScore
-    //     };
-    // });
+        let score = 0;
+        const reasons = [];
+        const load = calculateLoad(template.expected_rpe, template.default_duration_minutes);
+        const muscleOverlap = calculateMuscleOverlap(suggestionBasis.muscle_groups, template.muscle_groups);
+
+        if (SANDBOX) console.log(`Evaluating template: ${template.workout_name}`);
+
+        // Check if the template is the same as used in the last workout.
+        if (suggestionBasis.workout_template_id === template.workout_template_id) {
+            if (SANDBOX) console.log('Template is the same as last workout, applying penalty');
+            score -= 30;
+            reasons.push('Same workout as last time');
+        }
+
+        // Check if the template has the same focus type as the last workout.
+        if (suggestionBasis.focus_type_id === template.focus_type_id) {
+            if (SANDBOX) console.log('Template has same focus type as last workout, applying penalty');
+            score -= 20;
+            reasons.push('Same focus as previous workout');
+        } else {
+            if (SANDBOX) console.log('Template has different focus type from last workout, applying bonus');
+            score += 10;
+            reasons.push('Different focus than previous workout');
+        }
+
+        // Check load differences and apply bonuses or penalties based on how the template's expected load compares to the user's last workout load.
+        if (SANDBOX) console.log('Basis load:', basisLoad, 'Template load:', load);
+        if (basisLoad > 250 && load < 180) {
+            if (SANDBOX) console.log('Template has significantly lower load than last heavy workout, applying bonus');
+            score += 20;
+            reasons.push('Lower expected load after heavy workout');
+        }
+
+        if (basisLoad > 250 && load > 250) {
+            if (SANDBOX) console.log('Template has high load similar to last heavy workout, applying penalty');
+            score -= 25;
+            reasons.push('Too heavy after heavy workout');
+        }
+
+        if (basisLoad < 120 && load >= 150) {
+            if (SANDBOX) console.log('Template has suitable increase after light workout, applying bonus');
+            score += 15;
+            reasons.push('Suitable increase after light workout');
+        }
+
+        // Check muscle group overlap and apply penalties for high overlap.
+        if (SANDBOX) console.log('Muscle group overlap score:', muscleOverlap);
+        if (muscleOverlap >= 6) {
+            score -= 20;
+            reasons.push('High overlap with recently trained muscle groups');
+        } else if (muscleOverlap >= 3) {
+            score -= 8;
+            reasons.push('Some overlap with recently trained muscle groups');
+        } else {
+            score += 10;
+            reasons.push('Low overlap with recently trained muscle groups');
+        }
+
+        if (score > result.score) {
+            if (SANDBOX) console.log(reasons);
+            result.templates = [{
+                template: template,
+                reasons: reasons
+            }];
+            result.score = score;
+            if (SANDBOX) console.log('New best template found with score:', score);
+        } else if (score === result.score) {
+            if (SANDBOX) console.log(reasons);
+            result.templates.push({
+                template: template,
+                reasons: reasons
+            });
+            if (SANDBOX) console.log('Another template found with same best score:', score);
+        } else {
+            if (SANDBOX) console.log('Template scored lower (', score, ') than current best score:', result.score);
+        }
+    }
+
+    return result.templates[randomInt(0, result.templates.length - 1)]; // If multiple templates have the same best score, pick one at random to return.
 }
+
+
+/**
+ * Calculates a load value by multiplying RPE and duration.
+ */
+export function calculateLoad(rpe, duration) {
+    return rpe * duration;
+}
+
+
+/**
+ * Calculates the overlap in muscle groups between the suggestion basis and a workout template.
+ */
+export function calculateMuscleOverlap(basisMuscleGroups = [], templateMuscleGroups = []) {
+    const basisMap = new Map();
+
+    for (const muscleGroup of basisMuscleGroups) {
+        basisMap.set(muscleGroup.id, muscleGroup.emphasis_level);
+    }
+
+    let overlapScore = 0;
+
+    for (const muscleGroup of templateMuscleGroups) {
+        const basisEmphasis = basisMap.get(muscleGroup.id); // Check if this muscle group was worked in the basis activities
+
+        if (basisEmphasis) {
+            overlapScore += Math.min(basisEmphasis, muscleGroup.emphasis_level); // Add to score based on the emphasis level in the basis and template (if both are high, it adds more to the score than if one is low).
+        }
+    }
+
+    return overlapScore;
+}
+
+
+/**
+ * Generates a random integer between min and max.
+ */
+export function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+/**
+ * Reduces an array of muscle groups to unique entries, keeping the one with the highest emphasis level for each muscle group.
+ */
+export function reduceMuscleGroups(muscleGroups) {
+    const uniqueMuscleGroups = new Map();
+    muscleGroups.forEach(muscleGroup => {
+        const existing = uniqueMuscleGroups.get(muscleGroup.name);
+
+        if (!existing || muscleGroup.emphasis_level > existing.emphasis_level) {
+            uniqueMuscleGroups.set(muscleGroup.name, muscleGroup);
+        }
+    });
+    return Array.from(uniqueMuscleGroups.values());
+}
+
+
+/**
+ * Sorts muscle groups by their emphasis level in descending order.
+ */
+export function sortMuscleGroupsByEmphasis(muscleGroups) {
+    return muscleGroups.sort((a, b) => b.emphasis_level - a.emphasis_level);
+}
+
 
 /**
  * Checks if a given date is today's date.
