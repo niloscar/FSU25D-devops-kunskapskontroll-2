@@ -1,3 +1,8 @@
+/* =================================================================================
+ *  suggestion-model.test.js
+ *  Contains unit tests for the suggestion model functions.
+ * ================================================================================= */
+
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { calculateLoad, calculateMuscleOverlap, getEasiestWorkoutTemplate, randomInt, reduceMuscleGroups, sortMuscleGroupsByEmphasis, isToday, calculateBestWorkout, } from '../../src/suggestion/suggestion-model.js';
 

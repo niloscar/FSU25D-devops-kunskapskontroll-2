@@ -1,3 +1,8 @@
+/* =================================================================================
+ *  api-service.test.js
+ *  Contains unit tests for the API service functions, including caching behavior and error handling.
+ * ================================================================================= */
+
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { get, patch, API_BASE_URL, API_ANON_KEY, clearApiCache, invalidateApiCacheEntry } from '../../src/services/api-service.js';
 
