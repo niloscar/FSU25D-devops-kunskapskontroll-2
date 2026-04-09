@@ -15,8 +15,4 @@ describe("suggestion-model", () => {
   //   expect(model.suggestedAt).toBeInstanceOf(Date);
   // });
 
-  test("placeholder test", () => {
-    expect(true).toBe(true);
-  });
-
 });
