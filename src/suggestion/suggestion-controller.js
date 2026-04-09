@@ -1,0 +1,50 @@
+/* =================================================================================
+ *  suggestion-controller.js
+ *  Contains the main controller logic for generating workout suggestions. 
+ * ================================================================================= */
+
+
+import { getUserProfile, getWorkoutTemplates, getSuggestionBasis } from './suggestion-api.js';
+import { calculateBestWorkout } from './suggestion-model.js';
+import { renderSuggestionSection, renderSuggestedWorkout, renderSuggestionBasis, renderWelcomeMessage, renderError } from './suggestion-view.js';
+
+
+/**
+ * Main function to generate a workout suggestion for the user. 
+ * Fetches necessary data, calculates the best workout template based on the user's recent activities and preferences, and renders the suggestion in the DOM.
+ */
+export async function initSuggestionSection() {
+    //clearApiCache();
+    try {
+        /* Step 1: render the suggestion section container in the DOM */
+        renderSuggestionSection();
+
+        /* Step 2: get user profile, get all workout templates, get suggestion basis */
+        const [userProfile, workoutTemplates, suggestionBasis] = await Promise.all([
+            getUserProfile(),
+            getWorkoutTemplates(),
+            getSuggestionBasis()
+        ]);
+        
+        /* Step 3: calculate the best matching workout template based on the user's preferences and previous activities */
+        const suggestion = calculateBestWorkout(suggestionBasis, workoutTemplates);
+
+        if (!suggestion) {
+            renderError('No suitable workout suggestion could be generated.');
+            return;
+        }
+
+        const { template, reasons } = suggestion;
+
+        console.log('Suggestion generated with reasons:', reasons.join(', '));
+
+        //* Step 4: render welcome message, the suggestion and the basis for it in the DOM */
+        renderWelcomeMessage(userProfile);
+        renderSuggestedWorkout(template);
+        renderSuggestionBasis(suggestionBasis);
+        console.log('Suggestion rendered in the DOM');
+    } catch (error) {
+        console.error('Error generating suggestion:', error);
+        renderError('Could not generate workout suggestion.');
+    }
+}

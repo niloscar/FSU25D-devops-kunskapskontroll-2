@@ -1,8 +1,8 @@
 import { renderFrontpage } from './frontpage-view.js';
+import { initSuggestionSection } from '../suggestion/suggestion-controller.js';
 
 export function initFrontpage() {
-    // Ladda funktioner etc som vi vill ha på startsidan här.
-
     renderFrontpage();
+    initSuggestionSection();
     console.log('Frontpage initialized');
 }

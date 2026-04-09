@@ -8,6 +8,7 @@
     --spacing-small: 8px;
     --spacing-medium: 16px;
     --spacing-large: 24px;
+    --spacing-xlarge: 32px;
 
     --border-radius: 4px;
 }
@@ -34,13 +35,78 @@ body {
     max-width: var(--page-max-width);
 }
 
-#suggestion-container {
+#app,
+#suggestion-section,
+#suggestion-section > * {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-large);
+}
+
+#suggestion-section > * {
+    gap: var(--spacing-small);
+}
+
+#app > *,
+#suggestion-section > *, 
+#suggestion-section h2, 
+#suggestion-section h3,
+#suggestion-section p,
+#suggestion-section ul {
+    margin: 0;
+}
+
+#suggestion {
     background-color: #222;
     color: #fff;
     padding: var(--spacing-large);
     border-radius: var(--border-radius);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: var(--spacing-large) 0;
+}
+
+#suggestion .suggestion-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+#suggestion .suggestion-body > * {
+    margin: 0;
+}
+
+#suggestion a.suggestion-link {
+    display: inline-block;
+    color: #fff;
+    align-self: flex-end;
+    margin-right: 0;
+}
+
+#suggestion a.suggestion-link::after {
+    content: ' →';
+}
+
+#suggestion a.suggestion-link:hover {
+    text-decoration: underline;
+}
+
+#suggestion-basis ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#suggestion-basis details > summary {
+    cursor: pointer;
+}
+
+#suggestion-basis details ul {
+    list-style: none;
+    padding-left: var(--spacing-medium);
+    margin: var(--spacing-small) 0;
+}
+
+#suggestion-basis .activity-date {
+    font-size: 0.9em;
+    color: #888;
 }
 
 h1 {
