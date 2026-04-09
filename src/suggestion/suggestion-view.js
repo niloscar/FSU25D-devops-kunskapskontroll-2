@@ -74,7 +74,7 @@ export function renderSuggestionBasis(suggestionBasis) {
                         <ul>
                             <li><strong>Muscle Groups:</strong> ${entry.muscle_groups.map(mg => mg.name.toLowerCase()).join(', ')}</li>
                             <li><strong>Duration:</strong> ${entry.duration_minutes} minutes</li>
-                            <li><strong>Percieved Exertion:</strong> ${entry.rpe}/10</li>
+                            <li><strong>Perceived Exertion:</strong> ${entry.rpe}/10</li>
                         </ul>
                     </details>
                 </li>
