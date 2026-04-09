@@ -11,5 +11,5 @@ export async function initWorkoutPage(workoutId = 1) {
 }
 
 const params = new URLSearchParams(window.location.search);
-const workoutId = params.get('id') || 1;
+initWorkoutPage(params.get('id') || 1);
 initWorkoutPage();
