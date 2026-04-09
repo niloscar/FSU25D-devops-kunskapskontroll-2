@@ -42,7 +42,6 @@ export async function initSuggestionSection() {
         renderWelcomeMessage(userProfile);
         renderSuggestedWorkout(template);
         renderSuggestionBasis(suggestionBasis);
-        console.log('Suggestion rendered in the DOM');
     } catch (error) {
         console.error('Error generating suggestion:', error);
         renderError('Could not generate workout suggestion.');
