@@ -16,7 +16,7 @@ export function renderSuggestionSection() {
 
 
 /**
- * Renders welcome message and a comment about the last workout in the DOM.
+ * Renders welcome message in the DOM.
  */
 export function renderWelcomeMessage(userProfile) {
     const section = getElById('suggestion-section');
@@ -97,7 +97,7 @@ function getElById(elementId) {
 
 
 /**
- * Formats a date string a textual date format.
+ * Formats a date string to a textual date format.
  */
 function formatDate(dateString) {
     const date = new Date(dateString);
