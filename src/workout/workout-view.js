@@ -5,7 +5,7 @@ export function renderWorkout(workout) {
             <p>${workout.description}</p>
             <p>Intensitet: ${workout.expected_rpe}/10</p>
             <p>Tid: ${workout.default_duration_minutes} minuter</p>
-            <button id="exercises-btn" onclick="window.location.hash='exercises'">Se övningar</button>
+            <button id="exercises-btn" onclick="window.location.href='exercise.html'">Se övningar</button>
             <nav>
                 <a href="#home">Tillbaka</a>
             </nav>

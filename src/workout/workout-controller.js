@@ -9,3 +9,5 @@ export async function initWorkoutPage(workoutId = 1) {
         renderError(error.message);
     }
 }
+
+initWorkoutPage();
