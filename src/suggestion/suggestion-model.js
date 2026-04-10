@@ -185,14 +185,3 @@ export function reduceMuscleGroups(muscleGroups) {
 export function sortMuscleGroupsByEmphasis(muscleGroups) {
     return muscleGroups.sort((a, b) => b.emphasis_level - a.emphasis_level);
 }
-
-
-/**
- * Checks if a given date is today's date.
- */
-export function isToday(date) {
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
-}
