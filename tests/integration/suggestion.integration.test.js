@@ -24,33 +24,44 @@ describe('suggestion integration / initSuggestionSection', () => {
 
         getSuggestionBasis.mockResolvedValue([
             {
-                workout_template_id: 10,
-                focus_type_id: 1,
-                rpe: 8,
-                duration_minutes: 40,
+                user_id: 1,
+                performed_at: new Date().toISOString(),
+                default_duration_minutes: 20,
+                duration_minutes: 20,
+                expected_rpe: 4,
+                rpe: 4,
+                workout_template_id: 6,
+                workout_name: 'Beginner Full Body',
+                workout_description: 'Simple balanced workout for beginners',
                 muscle_groups: [
                     { id: 1, name: 'Chest', emphasis_level: 3 },
-                    { id: 2, name: 'Triceps', emphasis_level: 3 }
+                    { id: 6, name: 'Legs', emphasis_level: 3 },
+                    { id: 8, name: 'Core', emphasis_level: 3 }
                 ],
+                focus_type_id: 5,
+                focus_type_name: 'General Fitness',
             },
         ]);
 
         getWorkoutTemplates.mockResolvedValue([
             {
-                workout_template_id: 10,
-                workout_name: 'Heavy Push',
-                focus_type_id: 1,
-                expected_rpe: 8,
-                default_duration_minutes: 40,
+                default_duration_minutes: 30,
+                expected_rpe: 9,
+                workout_template_id: 5,
+                workout_name: 'Fat Burn HIIT',
+                workout_description: 'High intensity interval training',
                 muscle_groups: [
-                    { id: 1, name: 'Chest', emphasis_level: 3 },
-                    { id: 2, name: 'Triceps', emphasis_level: 3 }
+                    { "id": 6, "name": "Legs", "emphasis_level": 2 },
+                    { "id": 9, "name": "Cardio", "emphasis_level": 3 }
                 ],
+                focus_type_id: 4,
+                focus_type_name: 'Weight Loss'
             },
             {
                 workout_template_id: 20,
                 workout_name: 'Light Pull Recovery',
                 focus_type_id: 2,
+                focus_type_name: 'Recovery',
                 expected_rpe: 4,
                 default_duration_minutes: 30,
                 muscle_groups: [
@@ -62,7 +73,7 @@ describe('suggestion integration / initSuggestionSection', () => {
 
         await initSuggestionSection();
 
-        expect(document.body.textContent).toContain('Light Pull Recovery');
+        expect(document.body.textContent).toContain('Fat Burn HIIT');
         expect(document.body.textContent).toContain('Oscar');
     });
 
