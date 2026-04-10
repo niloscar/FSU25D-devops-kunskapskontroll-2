@@ -1,9 +1,3 @@
-/* =================================================================================
- *  suggestion.integration.test.js
- *  Contains integration tests for the workout suggestion flow.
- * ================================================================================= */
-
-
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../src/suggestion/suggestion-api.js', () => ({
@@ -12,86 +6,83 @@ vi.mock('../../src/suggestion/suggestion-api.js', () => ({
     getSuggestionBasis: vi.fn(),
 }));
 
-vi.mock('../../src/suggestion/suggestion-model.js', () => ({
-    calculateBestWorkout: vi.fn(),
-}));
-
-vi.mock('../../src/suggestion/suggestion-view.js', () => ({
-    renderSuggestionSection: vi.fn(),
-    renderWelcomeMessage: vi.fn(),
-    renderSuggestedWorkout: vi.fn(),
-    renderSuggestionBasis: vi.fn(),
-    renderError: vi.fn(),
-}));
-
 import { initSuggestionSection } from '../../src/suggestion/suggestion-controller.js';
-import { getUserProfile, getWorkoutTemplates, getSuggestionBasis } from '../../src/suggestion/suggestion-api.js';
-import { calculateBestWorkout } from '../../src/suggestion/suggestion-model.js';
-import { renderSuggestionSection, renderWelcomeMessage, renderSuggestedWorkout, renderSuggestionBasis, renderError } from '../../src/suggestion/suggestion-view.js';
+import {
+    getUserProfile,
+    getWorkoutTemplates,
+    getSuggestionBasis,
+} from '../../src/suggestion/suggestion-api.js';
 
-describe('suggestion-controller / initSuggestionSection', () => {
+describe('suggestion integration / initSuggestionSection', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        document.body.innerHTML = '<div id="app"></div>';
     });
 
-    test('renders a workout suggestion when required data is loaded successfully', async () => {
-        const userProfile = { name: 'Oscar' };
-        const workoutTemplates = [{ workout_template_id: 1, workout_name: 'Light Pull' }];
-        const suggestionBasis = [{ workout_template_id: 10, focus_type_id: 1 }];
-        const suggestion = {
-            template: workoutTemplates[0],
-            reasons: ['Different focus than previous workout'],
-            score: 40
-        };
+    test('renders the expected workout suggestion from latest workout and templates', async () => {
+        getUserProfile.mockResolvedValue({ fname: 'Oscar' });
 
-        getUserProfile.mockResolvedValue(userProfile);
-        getWorkoutTemplates.mockResolvedValue(workoutTemplates);
-        getSuggestionBasis.mockResolvedValue(suggestionBasis);
-        calculateBestWorkout.mockReturnValue(suggestion);
+        getSuggestionBasis.mockResolvedValue([
+            {
+                workout_template_id: 10,
+                focus_type_id: 1,
+                rpe: 8,
+                duration_minutes: 40,
+                muscle_groups: [
+                    { id: 1, name: 'Chest', emphasis_level: 3 },
+                    { id: 2, name: 'Triceps', emphasis_level: 3 }
+                ],
+            },
+        ]);
+
+        getWorkoutTemplates.mockResolvedValue([
+            {
+                workout_template_id: 10,
+                workout_name: 'Heavy Push',
+                focus_type_id: 1,
+                expected_rpe: 8,
+                default_duration_minutes: 40,
+                muscle_groups: [
+                    { id: 1, name: 'Chest', emphasis_level: 3 },
+                    { id: 2, name: 'Triceps', emphasis_level: 3 }
+                ],
+            },
+            {
+                workout_template_id: 20,
+                workout_name: 'Light Pull Recovery',
+                focus_type_id: 2,
+                expected_rpe: 4,
+                default_duration_minutes: 30,
+                muscle_groups: [
+                    { id: 3, name: 'Back', emphasis_level: 2 },
+                    { id: 4, name: 'Biceps', emphasis_level: 1 }
+                ],
+            },
+        ]);
 
         await initSuggestionSection();
 
-        expect(renderSuggestionSection).toHaveBeenCalledTimes(1);
-        expect(getUserProfile).toHaveBeenCalledTimes(1);
-        expect(getWorkoutTemplates).toHaveBeenCalledTimes(1);
-        expect(getSuggestionBasis).toHaveBeenCalledTimes(1);
-
-        expect(calculateBestWorkout).toHaveBeenCalledWith(
-            suggestionBasis,
-            workoutTemplates
-        );
-
-        expect(renderWelcomeMessage).toHaveBeenCalledWith(userProfile);
-        expect(renderSuggestedWorkout).toHaveBeenCalledWith(workoutTemplates[0]);
-        expect(renderSuggestionBasis).toHaveBeenCalledWith(suggestionBasis);
-        expect(renderError).not.toHaveBeenCalled();
+        expect(document.body.textContent).toContain('Light Pull Recovery');
+        expect(document.body.textContent).toContain('Oscar');
     });
 
-    test('renders error when no suitable suggestion can be generated', async () => {
-        getUserProfile.mockResolvedValue({ name: 'Oscar' });
+    test('renders fallback error when no suitable suggestion can be generated', async () => {
+        getUserProfile.mockResolvedValue({ fname: 'Oscar' });
         getWorkoutTemplates.mockResolvedValue([]);
         getSuggestionBasis.mockResolvedValue([]);
-        calculateBestWorkout.mockReturnValue(null);
 
         await initSuggestionSection();
 
-        expect(renderSuggestionSection).toHaveBeenCalledTimes(1);
-        expect(renderError).toHaveBeenCalledWith(
-            'No suitable workout suggestion could be generated.'
-        );
-        expect(renderWelcomeMessage).not.toHaveBeenCalled();
-        expect(renderSuggestedWorkout).not.toHaveBeenCalled();
-        expect(renderSuggestionBasis).not.toHaveBeenCalled();
+        expect(document.body.textContent).toContain('No suitable workout suggestion could be generated.');
     });
 
-    test('renders error when one of the dependencies throws', async () => {
+    test('renders fallback error when api loading fails', async () => {
         getUserProfile.mockRejectedValue(new Error('API failed'));
+        getWorkoutTemplates.mockResolvedValue([]);
+        getSuggestionBasis.mockResolvedValue([]);
 
         await initSuggestionSection();
 
-        expect(renderSuggestionSection).toHaveBeenCalledTimes(1);
-        expect(renderError).toHaveBeenCalledWith(
-            'Could not generate workout suggestion.'
-        );
+        expect(document.body.textContent).toContain('Could not generate workout suggestion.');
     });
 });
