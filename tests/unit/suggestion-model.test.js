@@ -3,7 +3,7 @@
  *  Contains unit tests for the suggestion model functions.
  * ================================================================================= */
 
-import { describe, test, expect, afterEach, vi } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import {
     calculateLoad,
     calculateMuscleOverlap,
