@@ -24,9 +24,8 @@
 - Supabase/DB-setup (Harald)
 - CI/CD-setup och GitHub-rulesets (Oscar)
 - Wireframes (Ilma/Deniz)
-- Grafisk profil (?)
 - Funktioner/sektioner/sidor
-    - Startsida (?)
+    - Startsida (Oscar)
     - Användarprofil (Harald)
     - Förslag på träningspass (Oscar)
     - Träningspassdetaljer (Ilma)
