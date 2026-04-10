@@ -1,8 +1,9 @@
 :root {
     --page-max-width: 600px;
 
+    --background-image-url: url('../img/gym-bg.png');
     --page-background: #f0f0f0;
-    --primary-color: rebeccapurple;
+    --primary-color: #222;
     --text-color: #333;
 
     --spacing-small: 8px;
@@ -27,6 +28,7 @@ body {
     padding-top: calc(var(--spacing-large) * 2);
     font-family: Arial, sans-serif;
     background-color: var(--page-background);
+    /* background: var(--page-background) var(--background-image-url) no-repeat center / cover; */
     color: var(--text-color);
 }
 
@@ -37,10 +39,15 @@ body {
 
 #app,
 #suggestion-section,
-#suggestion-section > * {
+#suggestion-section > *,
+#workout-container {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-large);
+}
+
+#workout-container {
+    gap: 0;
 }
 
 #suggestion-section > * {
@@ -52,12 +59,17 @@ body {
 #suggestion-section h2, 
 #suggestion-section h3,
 #suggestion-section p,
+#workout-container p,
 #suggestion-section ul {
     margin: 0;
 }
 
+#workout-container p:nth-of-type(1) {
+    margin-bottom: var(--spacing-medium);
+}
+
 #suggestion {
-    background-color: #222;
+    background-color: var(--primary-color);
     color: #fff;
     padding: var(--spacing-large);
     border-radius: var(--border-radius);
@@ -109,6 +121,37 @@ body {
     color: #888;
 }
 
+#user-profile {
+    width: 100%;
+    max-width: var(--page-max-width);
+    display: flex;
+    flex-direction: column;
+}
+
+#user-profile .profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: var(--spacing-medium);
+    background-color: rgba(0, 0, 0, 0.08);
+    align-self: center;
+    justify-self: center;
+}
+
+#user-profile table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+#user-profile th,
+#user-profile td {
+    padding: var(--spacing-small);
+    border-bottom: 1px solid #ddd;
+    width: 50%;
+}
+
 h1 {
     color: var(--text-color);
     margin: 0;
@@ -121,50 +164,71 @@ h2 {
 }
 
 a {
-    color: var(--primary-color);
+    color: #222;
     text-decoration: none;
-    margin-right: var(--spacing-medium);
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
+a.back-link {
+    display: inline-block;
+    margin-right: auto;
+}
+
+a.back-link::before {
+    content: '← ';
+}
 
 .site-footer {
-  margin-top: auto;
-  width: 100%;
-  background: #222;
-  color: #fff;
-  padding: var(--spacing-medium);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--border-radius);
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.08);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--spacing-xlarge);
 }
 
-.footer-inner {
-  width: 100%;
-  max-width: var(--page-max-width);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /*justify-content: space-between;*/
-  gap: var(--spacing-medium);
-}
-
-.footer-text {
-  font-weight: 600;
-  color: #fff;
+@media (max-width: 768px) {
+    .site-footer {
+        margin-top: auto;
+    }
 }
 
 .footer-link {
-  color: white;
-  padding: calc(var(--spacing-small) - 2px) var(--spacing-medium);
-  border-radius: var(--border-radius);
-  text-decoration: none;
-  font-weight: 600;
+    color: inherit;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease;
+    margin-left: auto;
+}
+
+.footer-link img.footer-profile-picture {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .footer-link:hover,
 .footer-link:focus {
-  background: rgba(255,255,255,0.08);
-  outline: none;
-  text-decoration: underline;
+  background-color: rgba(0,0,0,0.12);
+}
+
+button {
+    padding: var(--spacing-small) var(--spacing-medium);
+    margin-top: var(--spacing-large);
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center;
+    font-size: 1em;
 }

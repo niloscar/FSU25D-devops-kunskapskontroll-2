@@ -10,9 +10,6 @@ export function renderExercises(exercises) {
         <div id="exercise-container">
             <h1>Övningar</h1>
             ${exerciseList}
-            <nav>
-                <a href="workout.html">Tillbaka</a>
-            </nav>
         </div>
     `;
 }
