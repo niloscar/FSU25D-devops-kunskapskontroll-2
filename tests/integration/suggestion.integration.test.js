@@ -15,7 +15,7 @@ import {
 
 describe('suggestion integration / initSuggestionSection', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
         document.body.innerHTML = '<div id="app"></div>';
     });
 
