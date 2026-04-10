@@ -3,12 +3,39 @@
  *  Contains unit tests for the suggestion model functions.
  * ================================================================================= */
 
-import { describe, test, expect, vi, afterEach } from 'vitest';
-import { calculateLoad, calculateMuscleOverlap, getEasiestWorkoutTemplate, randomInt, reduceMuscleGroups, sortMuscleGroupsByEmphasis, isToday, calculateBestWorkout, } from '../../src/suggestion/suggestion-model.js';
+import { describe, test, expect } from 'vitest';
+import {
+    calculateLoad,
+    calculateMuscleOverlap,
+    getEasiestWorkoutTemplate,
+    randomInt,
+    reduceMuscleGroups,
+    sortMuscleGroupsByEmphasis,
+    calculateBestWorkout
+} from '../../src/suggestion/suggestion-model.js';
 
-afterEach(() => {
-    vi.restoreAllMocks();
-});
+const baseSuggestionBasis = {
+    workout_template_id: 1,
+    focus_type_id: 1,
+    rpe: 5,
+    duration_minutes: 30,
+    muscle_groups: []
+};
+
+const baseWorkoutTemplate = {
+    workout_template_id: 2,
+    workout_name: 'Default workout',
+    focus_type_id: 2,
+    expected_rpe: 5,
+    default_duration_minutes: 30,
+    muscle_groups: []
+};
+
+const baseMuscleGroup = {
+    id: 1,
+    name: 'Chest',
+    emphasis_level: 1
+};
 
 describe('model / calculateLoad', () => {
     test('multiplies rpe and duration', () => {
@@ -18,21 +45,25 @@ describe('model / calculateLoad', () => {
 
 describe('model / calculateMuscleOverlap', () => {
     test('returns 0 when there is no overlap', () => {
-        const basis = [{ id: 1, emphasis_level: 3 }];
-        const template = [{ id: 2, emphasis_level: 2 }];
+        const basis = [
+            { ...baseMuscleGroup, id: 1, emphasis_level: 3 }
+        ];
+        const template = [
+            { ...baseMuscleGroup, id: 2, emphasis_level: 2 }
+        ];
 
         expect(calculateMuscleOverlap(basis, template)).toBe(0);
     });
 
     test('sums the minimum emphasis for overlapping muscle groups', () => {
         const basis = [
-            { id: 1, emphasis_level: 3 },
-            { id: 2, emphasis_level: 2 }
+            { ...baseMuscleGroup, id: 1, emphasis_level: 3 },
+            { ...baseMuscleGroup, id: 2, emphasis_level: 2 }
         ];
         const template = [
-            { id: 1, emphasis_level: 2 },
-            { id: 2, emphasis_level: 3 },
-            { id: 3, emphasis_level: 1 }
+            { ...baseMuscleGroup, id: 1, emphasis_level: 2 },
+            { ...baseMuscleGroup, id: 2, emphasis_level: 3 },
+            { ...baseMuscleGroup, id: 3, emphasis_level: 1 }
         ];
 
         expect(calculateMuscleOverlap(basis, template)).toBe(4);
@@ -46,40 +77,20 @@ describe('model / calculateMuscleOverlap', () => {
 describe('model / getEasiestWorkoutTemplate', () => {
     test('returns template with lowest expected load', () => {
         const templates = [
-            {
-                workout_name: 'Hard',
-                expected_rpe: 8,
-                default_duration_minutes: 40
-            },
-            {
-                workout_name: 'Easy',
-                expected_rpe: 4,
-                default_duration_minutes: 20
-            },
-            {
-                workout_name: 'Medium',
-                expected_rpe: 5,
-                default_duration_minutes: 30
-            }
+            { ...baseWorkoutTemplate, workout_name: 'Hard', expected_rpe: 8, default_duration_minutes: 40 },
+            { ...baseWorkoutTemplate, workout_name: 'Easy', expected_rpe: 4, default_duration_minutes: 20 },
+            { ...baseWorkoutTemplate, workout_name: 'Medium', expected_rpe: 5, default_duration_minutes: 30 }
         ];
 
         expect(getEasiestWorkoutTemplate(templates)).toMatchObject({
-            workout_name: 'Easy'
+            workout_name: 'Easy',
         });
     });
 
     test('ignores templates with missing load values', () => {
         const templates = [
-            {
-                workout_name: 'Invalid',
-                expected_rpe: null,
-                default_duration_minutes: 30
-            },
-            {
-                workout_name: 'Valid',
-                expected_rpe: 4,
-                default_duration_minutes: 20
-            }
+            { ...baseWorkoutTemplate, workout_name: 'Invalid', expected_rpe: null, default_duration_minutes: 30 },
+            { ...baseWorkoutTemplate, workout_name: 'Valid', expected_rpe: 4, default_duration_minutes: 20 }
         ];
 
         expect(getEasiestWorkoutTemplate(templates)).toMatchObject({
@@ -89,16 +100,8 @@ describe('model / getEasiestWorkoutTemplate', () => {
 
     test('returns null when no valid template exists', () => {
         const templates = [
-            {
-                workout_name: 'Invalid 1',
-                expected_rpe: null,
-                default_duration_minutes: 30
-            },
-            {
-                workout_name: 'Invalid 2',
-                expected_rpe: 4,
-                default_duration_minutes: null
-            }
+            { ...baseWorkoutTemplate, workout_name: 'Invalid 1', expected_rpe: null, default_duration_minutes: 30 },
+            { ...baseWorkoutTemplate, workout_name: 'Invalid 2', expected_rpe: 4, default_duration_minutes: null }
         ];
 
         expect(getEasiestWorkoutTemplate(templates)).toBeNull();
@@ -118,14 +121,14 @@ describe('model / randomInt', () => {
 describe('model / reduceMuscleGroups', () => {
     test('keeps only one entry per muscle group name with highest emphasis', () => {
         const groups = [
-            { name: 'Chest', emphasis_level: 1 },
-            { name: 'Chest', emphasis_level: 3 },
-            { name: 'Back', emphasis_level: 2 }
+            { ...baseMuscleGroup, name: 'Chest', emphasis_level: 1 },
+            { ...baseMuscleGroup, name: 'Chest', emphasis_level: 3 },
+            { ...baseMuscleGroup, name: 'Back', emphasis_level: 2 }
         ];
 
         expect(reduceMuscleGroups(groups)).toEqual([
-            { name: 'Chest', emphasis_level: 3 },
-            { name: 'Back', emphasis_level: 2 }
+            { ...baseMuscleGroup, name: 'Chest', emphasis_level: 3 },
+            { ...baseMuscleGroup, name: 'Back', emphasis_level: 2 }
         ]);
     });
 });
@@ -133,9 +136,9 @@ describe('model / reduceMuscleGroups', () => {
 describe('model / sortMuscleGroupsByEmphasis', () => {
     test('sorts muscle groups by emphasis descending', () => {
         const groups = [
-            { name: 'Chest', emphasis_level: 1 },
-            { name: 'Back', emphasis_level: 3 },
-            { name: 'Legs', emphasis_level: 2 }
+            { ...baseMuscleGroup, name: 'Chest', emphasis_level: 1 },
+            { ...baseMuscleGroup, name: 'Back', emphasis_level: 3 },
+            { ...baseMuscleGroup, name: 'Legs', emphasis_level: 2 }
         ];
 
         const result = sortMuscleGroupsByEmphasis(groups);
@@ -144,31 +147,11 @@ describe('model / sortMuscleGroupsByEmphasis', () => {
     });
 });
 
-describe('model / isToday', () => {
-    test('returns true for today', () => {
-        expect(isToday(new Date())).toBe(true);
-    });
-
-    test('returns false for another day', () => {
-        expect(isToday(new Date('2000-01-01T12:00:00Z'))).toBe(false);
-    });
-});
-
 describe('model / calculateBestWorkout', () => {
     test('returns easiest starter workout when no previous workout exists', () => {
         const templates = [
-            {
-                workout_template_id: 1,
-                workout_name: 'Hard',
-                expected_rpe: 8,
-                default_duration_minutes: 40,
-            },
-            {
-                workout_template_id: 2,
-                workout_name: 'Easy',
-                expected_rpe: 4,
-                default_duration_minutes: 20
-            }
+            { ...baseWorkoutTemplate, workout_template_id: 1, workout_name: 'Hard', expected_rpe: 8, default_duration_minutes: 40 },
+            { ...baseWorkoutTemplate, workout_template_id: 2, workout_name: 'Easy', expected_rpe: 4, default_duration_minutes: 20 }
         ];
 
         const result = calculateBestWorkout([], templates);
@@ -182,11 +165,12 @@ describe('model / calculateBestWorkout', () => {
 
     test('returns null when no previous workout exists and no valid template exists', () => {
         const templates = [
-            {
-                workout_template_id: 1,
-                workout_name: 'Invalid',
-                expected_rpe: null,
-                default_duration_minutes: 20
+            { 
+                ...baseWorkoutTemplate, 
+                workout_template_id: 1, 
+                workout_name: 'Invalid', 
+                expected_rpe: null, 
+                default_duration_minutes: 20 
             }
         ];
 
@@ -196,39 +180,41 @@ describe('model / calculateBestWorkout', () => {
     test('selects the best scored workout template', () => {
         const suggestionBasisArray = [
             {
-                workout_template_id: 10,
-                focus_type_id: 1,
-                rpe: 8,
-                duration_minutes: 40,
+                ...baseSuggestionBasis, 
+                workout_template_id: 10, 
+                focus_type_id: 1, 
+                rpe: 8, 
+                duration_minutes: 40, 
                 muscle_groups: [
-                    { id: 1, emphasis_level: 3 },
-                    { id: 2, emphasis_level: 3 }
-                ]
-            }
+                    { ...baseMuscleGroup, id: 1, emphasis_level: 3 },
+                    { ...baseMuscleGroup, id: 2, emphasis_level: 3 }
+                ]}
         ];
 
         const templates = [
-            {
-                workout_template_id: 10,
-                workout_name: 'Repeat Heavy Push',
-                focus_type_id: 1,
-                expected_rpe: 8,
-                default_duration_minutes: 40,
-                muscle_groups: [
-                    { id: 1, emphasis_level: 3 },
-                    { id: 2, emphasis_level: 3 }
+            { 
+                ...baseWorkoutTemplate, 
+                workout_template_id: 10, 
+                workout_name: 'Repeat Heavy Push', 
+                focus_type_id: 1, 
+                expected_rpe: 8, 
+                default_duration_minutes: 40, 
+                muscle_groups: [ 
+                    { ...baseMuscleGroup, id: 1, emphasis_level: 3 }, 
+                    { ...baseMuscleGroup, id: 2, emphasis_level: 3 }
                 ]
             },
             {
+                ...baseWorkoutTemplate,
                 workout_template_id: 20,
                 workout_name: 'Light Pull',
                 focus_type_id: 2,
                 expected_rpe: 4,
                 default_duration_minutes: 30,
                 muscle_groups: [
-                    { id: 3, emphasis_level: 2 }
+                    { ...baseMuscleGroup, id: 3, emphasis_level: 2 },
                 ]
-            }
+            },
         ];
 
         const result = calculateBestWorkout(suggestionBasisArray, templates);
@@ -240,44 +226,105 @@ describe('model / calculateBestWorkout', () => {
         expect(result.reasons).toEqual([
             'Different focus than previous workout',
             'Lower expected load after heavy workout',
-            'Low overlap with recently trained muscle groups'
+            'Low overlap with recently trained muscle groups',
         ]);
     });
 
-    test('chooses one of the tied best templates', () => {
+    test('adds points for a suitable increase after a light workout', () => {
         const suggestionBasisArray = [
             {
+                ...baseSuggestionBasis,
+                rpe: 4,
+                duration_minutes: 20,
+            },
+        ];
+
+        const workoutTemplates = [
+            {
+                ...baseWorkoutTemplate,
+                workout_name: 'Progressive session',
+                expected_rpe: 5,
+                default_duration_minutes: 30,
+            },
+        ];
+
+        const result = calculateBestWorkout(suggestionBasisArray, workoutTemplates);
+
+        expect(result.template).toEqual(workoutTemplates[0]);
+        expect(result.reasons).toContain('Suitable increase after light workout');
+        expect(result.score).toBe(35);
+    });
+
+    test('removes points for some overlap of muscle groups', () => {
+        const suggestionBasisArray = [
+            {
+                ...baseSuggestionBasis,
+                rpe: 6,
+                duration_minutes: 30,
+                muscle_groups: [
+                    { ...baseMuscleGroup, id: 10, emphasis_level: 2 },
+                    { ...baseMuscleGroup, id: 20, emphasis_level: 1 },
+                ],
+            },
+        ];
+
+        const workoutTemplates = [
+            {
+                ...baseWorkoutTemplate,
+                workout_name: 'Moderate overlap workout',
+                expected_rpe: 5,
+                default_duration_minutes: 30,
+                muscle_groups: [
+                    { ...baseMuscleGroup, id: 10, emphasis_level: 2 },
+                    { ...baseMuscleGroup, id: 20, emphasis_level: 1 },
+                ],
+            },
+        ];
+
+        const result = calculateBestWorkout(suggestionBasisArray, workoutTemplates);
+
+        expect(result.template).toEqual(workoutTemplates[0]);
+        expect(result.reasons).toContain('Some overlap with recently trained muscle groups');
+        expect(result.score).toBe(2);
+    });
+
+    test('chooses one template when there is a tie', () => {
+        const suggestionBasisArray = [
+            {
+                ...baseSuggestionBasis,
                 workout_template_id: 10,
                 focus_type_id: 1,
                 rpe: 5,
                 duration_minutes: 20,
                 muscle_groups: [
-                    { id: 1, emphasis_level: 1 }
-                ]
-            }
+                    { ...baseMuscleGroup, id: 1, emphasis_level: 1 },
+                ],
+            },
         ];
 
         const templates = [
             {
+                ...baseWorkoutTemplate,
                 workout_template_id: 20,
                 workout_name: 'Workout 1',
                 focus_type_id: 2,
                 expected_rpe: 5,
                 default_duration_minutes: 20,
                 muscle_groups: [
-                    { id: 3, emphasis_level: 1 }
-                ]
+                    { ...baseMuscleGroup, id: 3, emphasis_level: 1 },
+                ],
             },
             {
+                ...baseWorkoutTemplate,
                 workout_template_id: 21,
                 workout_name: 'Workout 2',
                 focus_type_id: 2,
                 expected_rpe: 5,
                 default_duration_minutes: 20,
                 muscle_groups: [
-                    { id: 4, emphasis_level: 1 }
-                ]
-            }
+                    { ...baseMuscleGroup, id: 4, emphasis_level: 1 },
+                ],
+            },
         ];
 
         const result = calculateBestWorkout(suggestionBasisArray, templates);
