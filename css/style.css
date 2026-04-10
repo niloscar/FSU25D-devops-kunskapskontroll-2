@@ -1,6 +1,7 @@
 :root {
     --page-max-width: 600px;
 
+    --background-image-url: url(/img/gym-bg.png);
     --page-background: #f0f0f0;
     --primary-color: rebeccapurple;
     --text-color: #333;
@@ -27,6 +28,7 @@ body {
     padding-top: calc(var(--spacing-large) * 2);
     font-family: Arial, sans-serif;
     background-color: var(--page-background);
+    /* background: var(--page-background) var(--background-image-url) no-repeat center / cover; */
     color: var(--text-color);
 }
 
@@ -37,10 +39,15 @@ body {
 
 #app,
 #suggestion-section,
-#suggestion-section > * {
+#suggestion-section > *,
+#workout-container {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-large);
+}
+
+#workout-container {
+    gap: 0;
 }
 
 #suggestion-section > * {
@@ -52,8 +59,13 @@ body {
 #suggestion-section h2, 
 #suggestion-section h3,
 #suggestion-section p,
+#workout-container p,
 #suggestion-section ul {
     margin: 0;
+}
+
+#workout-container p:nth-of-type(1) {
+    margin-bottom: var(--spacing-medium);
 }
 
 #suggestion {
@@ -140,15 +152,6 @@ body {
     width: 50%;
 }
 
-#user-profile a.back-link {
-    display: inline-block;
-    margin-top: var(--spacing-large);
-}
-
-#user-profile a.back-link::before {
-    content: '← ';
-}
-
 h1 {
     color: var(--text-color);
     margin: 0;
@@ -169,11 +172,27 @@ a:hover {
     text-decoration: underline;
 }
 
+a.back-link {
+    display: inline-block;
+    margin-right: auto;
+}
+
+a.back-link::before {
+    content: '← ';
+}
+
 .site-footer {
-    margin-top: auto;
     width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--spacing-xlarge);
+}
+
+@media (max-width: 768px) {
+    .site-footer {
+        margin-top: auto;
+    }
 }
 
 .footer-link {
@@ -187,6 +206,7 @@ a:hover {
     border-radius: 50%;
     background-color: rgba(0, 0, 0, 0.08);
     transition: background-color 0.3s ease;
+    margin-left: auto;
 }
 
 .footer-link img.footer-profile-picture {
@@ -200,4 +220,17 @@ a:hover {
   background-color: rgba(0,0,0,0.12);
   outline: none;
   text-decoration: underline;
+}
+
+button {
+    padding: var(--spacing-small) var(--spacing-medium);
+    margin-top: var(--spacing-large);
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center;
+    font-size: 1em;
 }
