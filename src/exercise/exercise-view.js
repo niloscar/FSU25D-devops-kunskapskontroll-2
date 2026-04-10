@@ -1,8 +1,9 @@
 export function renderExercises(exercises) {
     const exerciseList = exercises.map(item => `
         <div class="exercise-card">
-            <h2>${item.name}</h2>
-            <p>${item.description}</p>
+            <h2>${item.exercises.name}</h2>
+            <p>${item.exercises.description}</p>
+            <p>${item.sets} sets × ${item.reps} reps — vila ${item.rest_seconds}s</p>
         </div>
     `).join('');
 
