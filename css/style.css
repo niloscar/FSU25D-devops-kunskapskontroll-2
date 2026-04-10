@@ -1,9 +1,9 @@
 :root {
     --page-max-width: 600px;
 
-    --background-image-url: url(/img/gym-bg.png);
+    --background-image-url: url('../img/gym-bg.png');
     --page-background: #f0f0f0;
-    --primary-color: rebeccapurple;
+    --primary-color: #222;
     --text-color: #333;
 
     --spacing-small: 8px;
@@ -69,7 +69,7 @@ body {
 }
 
 #suggestion {
-    background-color: #222;
+    background-color: var(--primary-color);
     color: #fff;
     padding: var(--spacing-large);
     border-radius: var(--border-radius);
@@ -218,14 +218,12 @@ a.back-link::before {
 .footer-link:hover,
 .footer-link:focus {
   background-color: rgba(0,0,0,0.12);
-  outline: none;
-  text-decoration: underline;
 }
 
 button {
     padding: var(--spacing-small) var(--spacing-medium);
     margin-top: var(--spacing-large);
-    background-color: #222;
+    background-color: var(--primary-color);
     color: #fff;
     border: none;
     border-radius: var(--border-radius);

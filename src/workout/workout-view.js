@@ -12,6 +12,6 @@ export function renderWorkout(workout) {
 
 export function renderError(message) {
     document.querySelector('#app').innerHTML = `
-        <p>Något gick fel: ${message}</p>
+        <p>Something went wrong: ${message}</p>
     `;
 }
