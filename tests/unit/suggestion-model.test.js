@@ -8,6 +8,7 @@ import {
     calculateLoad,
     calculateMuscleOverlap,
     getEasiestWorkoutTemplate,
+    randomInt,
     reduceMuscleGroups,
     sortMuscleGroupsByEmphasis,
     calculateBestWorkout
@@ -104,6 +105,16 @@ describe('model / getEasiestWorkoutTemplate', () => {
         ];
 
         expect(getEasiestWorkoutTemplate(templates)).toBeNull();
+    });
+});
+
+describe('model / randomInt', () => {
+    test('returns a value within the inclusive range', () => {
+        for (let i = 0; i < 50; i += 1) {
+            const value = randomInt(2, 4);
+            expect(value).toBeGreaterThanOrEqual(2);
+            expect(value).toBeLessThanOrEqual(4);
+        }
     });
 });
 
